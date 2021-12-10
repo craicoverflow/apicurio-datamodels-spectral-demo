@@ -5,8 +5,7 @@ import { truthy } from '@stoplight/spectral-functions';
 import openapiData from './petstore.json';
 
 async function run() {
-	let document = Library.readDocumentFromJSONString(JSON.stringify(openapiData));
-	Library.writeDocumentToJSONString(document);
+	const document = Library.readDocument(openapiData)
 
 	const spectralPlugin = new SpectralApicurioValidatorPlugin();
 	spectralPlugin.setRuleset({
@@ -32,7 +31,7 @@ async function run() {
 		}
 	})
 	// Validate that your changes are OK.
-	let problems = await Library.validateWithExtensions(document, null, [spectralPlugin]);
+	const problems = await Library.validateDocument(document, null, [spectralPlugin]);
 
 	console.log(JSON.stringify(problems, null, 2));
 };

@@ -1,6 +1,5 @@
-import { IValidationExtension, NodePath, ValidationProblem, ValidationProblemSeverity } from "apicurio-data-models";
-import { ISpectralDiagnostic, Spectral, Ruleset, Rule, RulesetDefinition } from '@stoplight/spectral-core';
-import { migrateRuleset } from '@stoplight/spectral-ruleset-migrator';
+import { IValidationExtension, NodePath, ValidationProblem, ValidationProblemSeverity, Node } from "apicurio-data-models";
+import { ISpectralDiagnostic, Spectral, RulesetDefinition } from '@stoplight/spectral-core';
 import { DiagnosticSeverity } from "@stoplight/types";
 import path from 'path';
 
@@ -10,7 +9,7 @@ export class SpectralApicurioValidatorPlugin implements IValidationExtension {
 		this.spectral = new Spectral();
 	}
 
-	async validate<Document>(node: Document): Promise<ValidationProblem[]> {
+	async validate(node: Node): Promise<ValidationProblem[]> {
 		//@ts-ignore
 		const results = await this.spectral.run(node);
 
