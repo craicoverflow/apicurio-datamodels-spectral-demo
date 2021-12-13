@@ -1,19 +1,20 @@
-import { IValidationExtension, NodePath, ValidationProblem, ValidationProblemSeverity, Node } from "apicurio-data-models";
-import { ISpectralDiagnostic, Spectral, RulesetDefinition } from '@stoplight/spectral-core';
+import { IDocumentValidatorExtension, NodePath, ValidationProblem, ValidationProblemSeverity, Node } from "apicurio-data-models";
+import { ISpectralDiagnostic, Spectral, RulesetDefinition, Ruleset } from '@stoplight/spectral-core';
 import { DiagnosticSeverity } from "@stoplight/types";
 import path from 'path';
 
-export class SpectralApicurioValidatorPlugin implements IValidationExtension {
+export class SpectralApicurioValidatorPlugin implements IDocumentValidatorExtension {
 	private spectral: Spectral;
 	constructor() {
 		this.spectral = new Spectral();
 	}
 
-	async validate(node: Node): Promise<ValidationProblem[]> {
+	async validateDocument(node: Node): Promise<ValidationProblem[]> {
 		//@ts-ignore
 		const results = await this.spectral.run(node);
 
 		if (!results.length) {
+			console.debug("no validation problems found in Spectral validator..")
 			return [];
 		}
 		const validationProblems: ValidationProblem[] = [];
@@ -32,7 +33,7 @@ export class SpectralApicurioValidatorPlugin implements IValidationExtension {
 		return validationProblems;
 	}
 
-	async setRuleset(ruleset: RulesetDefinition) {
+	async setRuleset(ruleset: RulesetDefinition | Ruleset) {
 		this.spectral.setRuleset(ruleset)
 	}
 }

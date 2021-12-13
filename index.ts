@@ -1,37 +1,15 @@
 import { Library } from 'apicurio-data-models';
 import { SpectralApicurioValidatorPlugin } from './SpectralApicurioValidatorPlugin';
-import { DiagnosticSeverity } from "@stoplight/types";
-import { truthy } from '@stoplight/spectral-functions';
 import openapiData from './petstore.json';
+import spectralRuleset from './.spectral'
 
 async function run() {
 	const document = Library.readDocument(openapiData)
 
-	const spectralPlugin = new SpectralApicurioValidatorPlugin();
-	spectralPlugin.setRuleset({
-		rules: {
-			'rhoas-response-media-type': {
-				given: '$.paths.*.*.responses.*.content',
-				description: 'application/json is the only acceptable content type',
-				severity: DiagnosticSeverity.Error,
-				then: {
-					function: truthy,
-					field: 'application/json'
-				}
-			},
-			'title-required': {
-				given: '$.info',
-				description: 'Description is required',
-				severity: DiagnosticSeverity.Error,
-				then: {
-					function: truthy,
-					field: 'title'
-				}
-			}
-		}
-	})
+	const spectralValidationExtension = new SpectralApicurioValidatorPlugin();
+	spectralValidationExtension.setRuleset(spectralRuleset);
 	// Validate that your changes are OK.
-	const problems = await Library.validateDocument(document, null, [spectralPlugin]);
+	const problems = await Library.validateDocument(document, null, [spectralValidationExtension]);
 
 	console.log(JSON.stringify(problems, null, 2));
 };
